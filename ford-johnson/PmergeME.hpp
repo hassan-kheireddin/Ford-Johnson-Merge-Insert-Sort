@@ -1,4 +1,3 @@
-ls
 #ifndef PMERGEME_HPP
 #define PMERGEME_HPP
 
@@ -22,24 +21,19 @@ private:
     std::deque<int> deqData;
     std::vector<int> orgData;
     
-    // Performance tracking
     size_t vecOp;
     size_t deqOp;
     clock_t _vectorStartTime;
     clock_t _vectorEndTime;
     clock_t _dequeStartTime;
     clock_t _dequeEndTime;
-    
-    // Input validation methods
+
     void _validateArguments(char** argv);
     std::vector<int> _parseArguments(char** argv);
     void _checkNumber(const std::string& numberStr);
-    bool _isValidInteger(const std::string& str);
     
-    // Jacobsthal number generation
     int _generateJacobsthal(int n);
     
-    // Template Ford-Johnson algorithm methods
     template<typename Container>
     Container _mergeSortRecursive(Container& input, bool isVector);
     
@@ -65,7 +59,6 @@ private:
     void _reconstructPendFromMain(Container& newPend, const Container& newMain, 
                                  const Container& main, const Container& pend);
     
-    // Template performance tracking methods
     template<typename Container>
     void _startTiming(bool isVector);
     
@@ -84,34 +77,28 @@ private:
     template<typename Container>
     size_t _getOperationCount(bool isVector) const;
     
-    // Performance tracking methods
     void _resetPerformanceTracking();
     
-    // Output formatting methods
     void _printBefore() const;
     void _printAfter() const;
     void _printTimingResults() const;
     void _printOperationCount() const;
 
 public:
-    // Orthodox Canonical Form
     PmergeME();
     PmergeME(const PmergeME& other);
     PmergeME& operator=(const PmergeME& other);
     ~PmergeME();
     
-    // Main interface
     void processInput(char** argv);
     void sortAndDisplay();
     
-    // Getters
     const std::vector<int>& getVectorData() const;
     const std::deque<int>& getDequeData() const;
     size_t getVectorOperationCount() const;
     size_t getDequeOperationCount() const;
 };
 
-// Include template implementation
-#include "PmergeME.tpp"
+#include "PmergeMe.tpp"
 
-#endif // PMERGEME_HPP
+#endif

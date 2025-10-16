@@ -1,6 +1,5 @@
-#include "PmergeME.hpp"
+#include "PmergeMe.hpp"
 
-// Orthodox Canonical Form implementation
 PmergeME::PmergeME() : vecOp(0), deqOp(0), 
                        _vectorStartTime(0), _vectorEndTime(0), _dequeStartTime(0), _dequeEndTime(0) {}
 
@@ -28,7 +27,6 @@ PmergeME& PmergeME::operator=(const PmergeME& other)
 
 PmergeME::~PmergeME() {}
 
-// Main interface implementation
 void PmergeME::processInput(char** argv)
 {
     orgData = _parseArguments(argv);
@@ -42,12 +40,10 @@ void PmergeME::sortAndDisplay()
     
     _resetPerformanceTracking();
     
-    // Sort vector
     _startTiming<std::vector<int> >(true);
     vecData = _mergeSortRecursive(vecData, true);
     _stopTiming<std::vector<int> >(true);
     
-    // Sort deque
     _startTiming<std::deque<int> >(false);
     deqData = _mergeSortRecursive(deqData, false);
     _stopTiming<std::deque<int> >(false);
@@ -57,7 +53,6 @@ void PmergeME::sortAndDisplay()
     _printOperationCount();
 }
 
-// Input validation implementation
 void PmergeME::_validateArguments(char** argv)
 {
     if (argv[1] == NULL) {
@@ -82,7 +77,9 @@ void PmergeME::_validateArguments(char** argv)
                 throw std::invalid_argument("Error: Number is out of range (must be between INT_MIN and INT_MAX).");
             }
             
-            seenNumbers.insert(static_cast<int>(num));
+            if (!seenNumbers.insert(static_cast<int>(num)).second) {
+                throw std::invalid_argument("Error: Duplicate number detected.");
+            }
             numberCount++;
         }
     }
@@ -112,35 +109,21 @@ std::vector<int> PmergeME::_parseArguments(char** argv)
     return numbers;
 }
 
-void PmergeME::_checkNumber(const std::string& numberStr)
+void PmergeME::_checkNumber(const std::string& str)
 {
-    if (!_isValidInteger(numberStr)) {
-        throw std::invalid_argument("Error: Input contains non-numeric characters.");
-    }
-    
-    if (numberStr == "-") {
-        throw std::invalid_argument("Error: Invalid number format '-'. Expected a valid integer.");
-    }
-}
-
-bool PmergeME::_isValidInteger(const std::string& str)
-{
-    if (str.empty()) return false;
+    if (str.empty()) throw std::invalid_argument("Error: Input contains non-numeric characters.");;
     
     size_t start = 0;
     if (str[0] == '-' || str[0] == '+') {
-        if (str.length() == 1) return false;
+        if (str.length() == 1) throw std::invalid_argument("Error: Input contains non-numeric characters.");;
         start = 1;
     }
     
     for (size_t i = start; i < str.length(); ++i) {
-        if (!isdigit(str[i])) return false;
+        if (!isdigit(str[i])) throw std::invalid_argument("Error: Input contains non-numeric characters.");;
     }
-    
-    return true;
 }
 
-// Jacobsthal number generation
 int PmergeME::_generateJacobsthal(int n)
 {
     if (n == 0) return 0;
@@ -155,7 +138,6 @@ int PmergeME::_generateJacobsthal(int n)
     return curr;
 }
 
-// Performance tracking methods
 void PmergeME::_resetPerformanceTracking()
 {
     vecOp = 0;
@@ -166,9 +148,6 @@ void PmergeME::_resetPerformanceTracking()
     _dequeEndTime = 0;
 }
 
-
-
-// Output formatting methods
 void PmergeME::_printBefore() const
 {
     std::cout << "before:         ";
@@ -199,10 +178,10 @@ void PmergeME::_printAfter() const
 void PmergeME::_printTimingResults() const
 {
     std::cout << "Time to process a range of " << deqData.size() << " elements with std::deque: ";
-    std::cout << std::fixed << std::setprecision(6) << _getElapsedTime<std::deque<int> >(false) << " us" << std::endl;
+    std::cout << std::fixed << std::setprecision(6) << _getElapsedTime<std::deque<int> >(false) << " s" << std::endl;
     
     std::cout << "Time to process a range of " << vecData.size() << " elements with std::vector: ";
-    std::cout << std::fixed << std::setprecision(6) << _getElapsedTime<std::vector<int> >(true) << " us" << std::endl;
+    std::cout << std::fixed << std::setprecision(6) << _getElapsedTime<std::vector<int> >(true) << " s" << std::endl;
 }
 
 void PmergeME::_printOperationCount() const
@@ -211,7 +190,6 @@ void PmergeME::_printOperationCount() const
     std::cout << "Total moves for deque-based sorting: " << _getOperationCount<std::deque<int> >(false) << std::endl;
 }
 
-// Getters
 const std::vector<int>& PmergeME::getVectorData() const
 {
     return _getData<std::vector<int> >(true);

@@ -1,9 +1,7 @@
 #ifndef PMERGEME_TPP
 #define PMERGEME_TPP
 
-#include "PmergeME.hpp"
-
-// Template method implementations
+#include "PmergeMe.hpp"
 
 template<typename Container>
 Container PmergeME::_mergeSortRecursive(Container& input, bool isVector)
@@ -183,26 +181,18 @@ int PmergeME::_binarySearch(const Container& main, int target, int high, bool is
         high = main.size() - 1;
     
     while (low <= high) {
-        int mid = (low + high) / 2;
+        int mid = low + (high - low) / 2;
         _incrementOperations<Container>(isVector);
         
-        if (main[mid] == target) {
-            return mid;
-        } else if (main[mid] > target) {
+        if (main[mid] > target) {
             high = mid - 1;
         } else {
             low = mid + 1;
         }
     }
-    
-    if (low < static_cast<int>(main.size()) && target < main[low]) {
-        return low;
-    }
-    
-    return main.size();
+    return low;
 }
 
-// Template performance tracking methods
 template<typename Container>
 void PmergeME::_startTiming(bool isVector)
 {
@@ -238,25 +228,24 @@ double PmergeME::_getElapsedTime(bool isVector) const
 {
     if (isVector) {
         if (_vectorStartTime == 0 || _vectorEndTime == 0) return 0.0;
-        return static_cast<double>(_vectorEndTime - _vectorStartTime) / CLOCKS_PER_SEC * 1000000; // microseconds
+        return static_cast<double>(_vectorEndTime - _vectorStartTime) / CLOCKS_PER_SEC; // microseconds
     } else {
         if (_dequeStartTime == 0 || _dequeEndTime == 0) return 0.0;
-        return static_cast<double>(_dequeEndTime - _dequeStartTime) / CLOCKS_PER_SEC * 1000000; // microseconds
+        return static_cast<double>(_dequeEndTime - _dequeStartTime) / CLOCKS_PER_SEC; // microseconds
     }
 }
 
-// Specialized template implementations for _getData
 template<>
 inline const std::vector<int>& PmergeME::_getData<std::vector<int> >(bool isVector) const
 {
-    (void)isVector; // suppress unused parameter warning
+    (void)isVector;
     return vecData;
 }
 
 template<>
 inline const std::deque<int>& PmergeME::_getData<std::deque<int> >(bool isVector) const
 {
-    (void)isVector; // suppress unused parameter warning
+    (void)isVector;
     return deqData;
 }
 
@@ -270,4 +259,4 @@ size_t PmergeME::_getOperationCount(bool isVector) const
     }
 }
 
-#endif // PMERGEME_TPP
+#endif
