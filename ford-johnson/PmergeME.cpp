@@ -83,10 +83,6 @@ void PmergeME::_validateArguments(char** argv)
             numberCount++;
         }
     }
-    
-    if (numberCount < 2) {
-        throw std::invalid_argument("Error: At least two numbers are required.");
-    }
 }
 
 std::vector<int> PmergeME::_parseArguments(char** argv)
@@ -114,7 +110,7 @@ void PmergeME::_checkNumber(const std::string& str)
     if (str.empty()) throw std::invalid_argument("Error: Input contains non-numeric characters.");;
     
     size_t start = 0;
-    if (str[0] == '-' || str[0] == '+') {
+    if (str[0] == '+') {
         if (str.length() == 1) throw std::invalid_argument("Error: Input contains non-numeric characters.");;
         start = 1;
     }
